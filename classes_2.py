@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''Теперь и в гите'''
+
 CONNECT_TIMEOUT = 30
 GET_TIMEOUT = 60
 TRIES = 30

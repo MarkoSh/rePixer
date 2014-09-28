@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-'''Теперь и в гите'''
+
 import sys, os, ftplib, ConfigParser, MySQLdb, cStringIO, pycurl, re, datetime, time, urllib
 
 class rePixer:
