@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+'''Теперь и в гите'''
 from classes_2 import *
 
 if not os.path.exists(os.path.expanduser('~') + '/.repixer'):
