@@ -30,7 +30,7 @@ class rePixer:
 			print "\t%s works good123" % srvc
 			print "\t%s" % link
 		except:
-			print "\t%s ERROR IN LINK ##########" % srvc
+			print "\t%s ERROR IN LINK ##########123123" % srvc
 		return
 
 	def PlatimZaFotoCallback(self, srvc, pic):
