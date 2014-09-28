@@ -167,7 +167,7 @@ class rePixer:
 		try:
 			link = re.search(self.imageHostersConfig.get(srvc, 'picLinkRx'), self.buf.getvalue()).group(1)
 			self.picsList.append(link)
-			print "\t%s works good" % srvc
+			print "\t%s works good123" % srvc
 			print "\t%s" % link
 		except:
 			print "\t%s ERROR IN LINK ##########" % srvc
