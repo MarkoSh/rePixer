@@ -26,5 +26,5 @@ repixer.repixMe()
 #repixer.repixOld()
 dateEnd = datetime.datetime.now()
 diff = time.strftime('%H:%M:%S', time.gmtime(round((dateEnd - dateStart).total_seconds(), 0)))
-cmd = 'echo "All pix repixed in ' + diff + ', My Lord" | mail -s "Repix done" -a "From: vps2@vps2.vps2" markhost@yandex.ru'
+cmd = 'echo "All pix repixed in ' + diff + ', My Lordy" | mail -s "Repix done" -a "From: vps2@vps2.vps2" markhost@yandex.ru'
 os.system(cmd)
