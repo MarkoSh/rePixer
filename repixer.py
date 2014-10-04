@@ -22,7 +22,7 @@ imageHostersConfig.read(os.path.expanduser('~') + '/.repixer/image-hosters.cfg')
 
 dateStart = datetime.datetime.now()
 repixer = rePixer(sqlConfig, siteFtpConfig, imageHostersConfig)
-repixer.repixMe()
+#repixer.repixMe()
 #repixer.repixOld()
 dateEnd = datetime.datetime.now()
 diff = time.strftime('%H:%M:%S', time.gmtime(round((dateEnd - dateStart).total_seconds(), 0)))
