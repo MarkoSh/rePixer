@@ -42,6 +42,10 @@ class rePixer:
                 screenList = self.getFileFromFTP("Free3x", sl[2:])
                 size = os.path.getsize(screenList)
                 if size < 1024000:
+                    process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
+                    process.name = "ImageBamCallback"
+                    process.daemon = False
+                    processList.append(process)
                     process = threading.Thread(target=self.PostImageCallback, args=(screenList, slLinks))
                     process.name = "PostImageCallback"
                     process.daemon = False
@@ -139,6 +143,29 @@ class rePixer:
                 continue
         print "Getting file {0}...Done".format(filePath, )
         return os.path.basename(filePath)
+
+    def ImageBamCallback(self, pic, slLinks=list()):
+        for tries in range(0, TRIES):
+            self.lock.acquire()
+            print "ImageBamCallback: processing {0}...".format(pic, )
+            self.lock.release()
+            curl = pycurl.Curl()
+            srvc = 'ImageBam.com'
+            postData = [(self.imageHostersConfig.get(srvc, 'filePostField'), (curl.FORM_FILE, pic))]
+            for equals in str(self.imageHostersConfig.get(srvc, 'additionalPostData')).split('&'):
+                postData.append(tuple(item for item in equals.split('=')))
+            try:
+                page = self.postFile(self.imageHostersConfig.get(srvc, 'postUrl'), postData)
+                link = re.search(self.imageHostersConfig.get(srvc, 'picLinkRx'), page).group(1)
+                self.lock.acquire()
+                print "ImageBamCallback: {0}".format(link)
+                slLinks.append(link)
+                self.lock.release()
+                return
+            except:
+                print "ImageBamCallback: Error in Link\nImageBamCallback: try {0}".format(tries)
+                continue
+        return
 
     def PostImageCallback(self, pic, slLinks=list()):
         for tries in range(0, TRIES):
