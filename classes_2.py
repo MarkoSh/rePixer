@@ -41,7 +41,7 @@ class rePixer:
                 print "Processing screenlist: {0}...".format(sl[2:], )
                 screenList = self.getFileFromFTP("Free3x", sl[2:])
                 size = os.path.getsize(screenList)
-                if size < 2024000:
+                if size < 1024000:
                     process = threading.Thread(target=self.PostImageCallback, args=(screenList, slLinks))
                     process.name = "PostImageCallback"
                     process.daemon = False
