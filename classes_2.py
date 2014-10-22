@@ -42,6 +42,7 @@ class rePixer:
                 screenList = self.getFileFromFTP("Free3x", sl[2:])
                 size = os.path.getsize(screenList)
                 if size < 1024000:
+                    #self.PostImageCallback(screenList, slLinks)
                     process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
                     process.name = "ImageBamCallback"
                     process.daemon = False
