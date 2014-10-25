@@ -74,7 +74,7 @@ class rePixer:
                     process = threading.Thread(target=self.Pic4PayCallback, args=(screenList, slLinks))
                     process.name = "Pic4PayCallback"
                     process.daemon = False
-                    processList.append(process)
+                    #processList.append(process)
                     process = threading.Thread(target=self.PicCashCallback, args=(screenList, slLinks))
                     process.name = "PicCashCallback"
                     process.daemon = False
