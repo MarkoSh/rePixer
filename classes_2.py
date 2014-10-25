@@ -42,7 +42,7 @@ class rePixer:
                 screenList = self.getFileFromFTP("Free3x", sl[2:])
                 size = os.path.getsize(screenList)
                 if size < 10240000:
-                    self.Pic4PayCallback(screenList, slLinks)
+                    self.Pic4YouCallback(screenList, slLinks)
                     '''process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
                     process.name = "ImageBamCallback"
                     process.daemon = False
@@ -306,12 +306,13 @@ class rePixer:
             self.lock.release()
             curl = pycurl.Curl()
             srvc = 'Pic4You.ru'
-            try:
-                page = self.post(self.imageHostersConfig.get(srvc, 'authUrl'),
-                                 self.imageHostersConfig.get(srvc, 'authData'), cookies=True)
-            except:
+
+            page = self.post(self.imageHostersConfig.get(srvc, 'authUrl'),
+                             self.imageHostersConfig.get(srvc, 'authData'), cookies=True)
+            if not re.search('Location: http://pic4you.ru/cabinet/', page):
                 print "Pic4YouCallback: Error in auth\nPic4YouCallback try {0}".format(tries)
                 continue
+
             postData = [(self.imageHostersConfig.get(srvc, 'filePostField'), (curl.FORM_FILE, pic))]
             for equals in str(self.imageHostersConfig.get(srvc, 'additionalPostData')).split('&'):
                 postData.append(tuple(item for item in equals.split('=')))
