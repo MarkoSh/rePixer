@@ -41,16 +41,16 @@ class rePixer:
                 print "Processing screenlist: {0}...".format(sl[2:], )
                 screenList = self.getFileFromFTP("Free3x", sl[2:])
                 size = os.path.getsize(screenList)
-                if size < 1024000:
-                    #self.PostImageCallback(screenList, slLinks)
-                    process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
+                if size < 10240000:
+                    self.Pic4PayCallback(screenList, slLinks)
+                    '''process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
                     process.name = "ImageBamCallback"
                     process.daemon = False
                     processList.append(process)
                     process = threading.Thread(target=self.PostImageCallback, args=(screenList, slLinks))
                     process.name = "PostImageCallback"
                     process.daemon = False
-                    processList.append(process)
+                    #processList.append(process)
                     process = threading.Thread(target=self.PicSeeCallback, args=(screenList, slLinks))
                     process.name = "PicSeeCallback"
                     process.daemon = False
@@ -78,7 +78,7 @@ class rePixer:
                     process = threading.Thread(target=self.PlatimZaFotoCallback, args=(screenList, slLinks))
                     process.name = "PlatimZaFotoCallback"
                     process.daemon = False
-                    #processList.append(process)
+                    #processList.append(process)'''
                     for process in processList:
                         process.start()
                     for process in processList:
@@ -179,7 +179,7 @@ class rePixer:
             for equals in str(self.imageHostersConfig.get(srvc, 'additionalPostData')).split('&'):
                 postData.append(tuple(item for item in equals.split('=')))
             try:
-                page = self.postFile(self.imageHostersConfig.get(srvc, 'postUrl'), postData)
+                page = self.postFile(self.imageHostersConfig.get(srvc, 'postUrl'), postData, proxy=True)
                 link = re.search(self.imageHostersConfig.get(srvc, 'picLinkRx'), page).group(1)
                 self.lock.acquire()
                 print "PostImageCallback: {0}".format(link)
@@ -346,16 +346,20 @@ class rePixer:
                 self.post(self.imageHostersConfig.get(srvc, 'authUrl'), self.imageHostersConfig.get(srvc, 'authData'),
                           cookies=True)
             page = self.get(self.imageHostersConfig.get(srvc, 'getUrl'), cookies=True)
-            session = re.search("'PHPSESSID':'(\w+)'", page).group(1)
-            postData = [(self.imageHostersConfig.get(srvc, 'filePostField'), (curl.FORM_FILE, pic)),
-                        ('PHPSESSID', session)]
-            page = self.postFile(self.imageHostersConfig.get(srvc, 'postUrl'), postData, cookies=True)
-            link = 'http://pic4pay.com/' + re.search('"pic_id":"(\w+)"', page).group(1) + '.html'
-            self.lock.acquire()
-            print "Pic4PayCallback: {0}".format(link)
-            slLinks.append(link)
-            self.lock.release()
-            return
+            try:
+                session = re.search("'PHPSESSID':'(\w+)'", page).group(1)
+                postData = [(self.imageHostersConfig.get(srvc, 'filePostField'), (curl.FORM_FILE, pic)),
+                            ('PHPSESSID', session)]
+                page = self.postFile(self.imageHostersConfig.get(srvc, 'postUrl'), postData, cookies=True)
+                link = 'http://pic4pay.com/' + re.search('"pic_id":"(\w+)"', page).group(1) + '.html'
+                self.lock.acquire()
+                print "Pic4PayCallback: {0}".format(link)
+                slLinks.append(link)
+                self.lock.release()
+                return
+            except:
+                print "Pic4PayCallback: Error in link\nPic4PayCallback try {0}".format(tries)
+                continue
         return
 
     def PicCashCallback(self, pic, slLinks=list()):
