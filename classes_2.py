@@ -41,9 +41,13 @@ class rePixer:
                 print "Processing screenlist: {0}...".format(sl[2:], )
                 screenList = self.getFileFromFTP("Free3x", sl[2:])
                 size = os.path.getsize(screenList)
-                if size < 10240000:
-                    self.ImageZillaCallback(screenList, slLinks)
-                    '''process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
+                if size < 1024000:
+                    #self.ImageZillaCallback(screenList, slLinks)
+                    process = threading.Thread(target=self.ImageZillaCallback, args=(screenList, slLinks))
+                    process.name = "ImageZillaCallback"
+                    process.daemon = False
+                    processList.append(process)
+                    process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
                     process.name = "ImageBamCallback"
                     process.daemon = False
                     processList.append(process)
@@ -78,7 +82,7 @@ class rePixer:
                     process = threading.Thread(target=self.PlatimZaFotoCallback, args=(screenList, slLinks))
                     process.name = "PlatimZaFotoCallback"
                     process.daemon = False
-                    #processList.append(process)'''
+                    #processList.append(process)
                     for process in processList:
                         process.start()
                     for process in processList:
@@ -157,7 +161,8 @@ class rePixer:
                 postData.append(tuple(item for item in equals.split('=')))
             try:
                 page = self.postFile(self.imageHostersConfig.get(srvc, 'postUrl'), postData)
-                link = re.search(self.imageHostersConfig.get(srvc, 'picLinkRx'), page).group(1)
+                link = re.search(self.imageHostersConfig.get(srvc, 'picLinkRx'), page).group(1).replace('images',
+                                                                                                        'show')
                 self.lock.acquire()
                 print "ImageZillaCallback: {0}".format(link)
                 slLinks.append(link)
