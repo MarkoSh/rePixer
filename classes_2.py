@@ -42,7 +42,7 @@ class rePixer:
                 screenList = self.getFileFromFTP("Free3x", sl[2:])
                 size = os.path.getsize(screenList)
                 if size < 10240000:
-                    self.Pic4YouCallback(screenList, slLinks)
+                    self.ImageZillaCallback(screenList, slLinks)
                     '''process = threading.Thread(target=self.ImageBamCallback, args=(screenList, slLinks))
                     process.name = "ImageBamCallback"
                     process.daemon = False
@@ -144,6 +144,29 @@ class rePixer:
                 continue
         print "Getting file {0}...Done".format(filePath, )
         return os.path.basename(filePath)
+
+    def ImageZillaCallback(self, pic, slLinks=list()):
+        for tries in range(0, TRIES):
+            self.lock.acquire()
+            print "ImageZillaCallback: processing {0}...".format(pic, )
+            self.lock.release()
+            curl = pycurl.Curl()
+            srvc = 'ImageZilla.net'
+            postData = [(self.imageHostersConfig.get(srvc, 'filePostField'), (curl.FORM_FILE, pic))]
+            for equals in str(self.imageHostersConfig.get(srvc, 'additionalPostData')).split('&'):
+                postData.append(tuple(item for item in equals.split('=')))
+            try:
+                page = self.postFile(self.imageHostersConfig.get(srvc, 'postUrl'), postData)
+                link = re.search(self.imageHostersConfig.get(srvc, 'picLinkRx'), page).group(1)
+                self.lock.acquire()
+                print "ImageZillaCallback: {0}".format(link)
+                slLinks.append(link)
+                self.lock.release()
+                return
+            except:
+                print "ImageZillaCallback: Error in Link\nImageZillaCallback: try {0}".format(tries)
+                continue
+        return
 
     def ImageBamCallback(self, pic, slLinks=list()):
         for tries in range(0, TRIES):
